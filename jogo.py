@@ -1,6 +1,18 @@
 import pygame
 import random
 
+#abre o arquivo txt com as informações do usuário
+arquivo = open("registro.txt", "a+")
+
+nome = input("Qual é o seu nome? ")
+email = input("Qual é o seu email? ")
+
+arquivo.write("O nome do usuário é: ")
+arquivo.write(nome)
+arquivo.write("\nO email do usuário é: ")
+arquivo.write(email)
+arquivo.close()
+
 pygame.init()
 pygame.mixer.init()
 
@@ -22,6 +34,7 @@ player = pygame.image.load("assets/SkittlesGirlDOLL.gif")
 truss = pygame.image.load("assets/truss.gif")
 fonte = pygame.font.Font('freesansbold.ttf', 16)
 
+
 # define playlist
 playlist = list()
 playlist.append("assets/musicas/cant_get_over.mp3")
@@ -36,13 +49,11 @@ pygame.mixer.music.queue(random.choice(playlist))
 pygame.mixer.music.play()
 pygame.mixer.music.set_endevent(pygame.USEREVENT)
 
-# deixa cores da moldura alternando
 fundo = (10, 10, 10)
 rosa = (255, 102, 102)
 azul = (0, 0, 255)
 azulClaro = (135, 206, 235)
 branco = (255, 255, 255)
-
 
 def desenhaMoldura(cor):
     pygame.draw.rect(tela, cor, pygame.Rect(0, 0, 510, 145))
@@ -52,26 +63,28 @@ def desenhaMoldura(cor):
     pygame.draw.rect(tela, cor, pygame.Rect(0, 660, 510, 670))
     pygame.display.flip()
 
-
 # variaveis do disco
 posicIncialDisco = 115
 posicFinalDisco = 660
-discoX = random.randrange(0, largura)
+discoX = random.randrange(10, 500)
 discoY = posicIncialDisco
 velocidade = 0.5
 discosPerdidos = 0
 discosColetados = 0
 discoLista = []
+larguraDisco = 32
+alturaDisco = 32
 
 # variaveis do player
 playerX = 204
 playerY = 564
 movimentoXPlayer = 0
+larguraPlayer = 51
+alturaPlayer = 86
 colisao = False
 
+
 # exibe mensagem de fim de jogo
-
-
 def fimJogo():
     for event in gameEvents.get():
         if event.type == pygame.QUIT:
@@ -105,7 +118,6 @@ def mostraJogo():
     tela.blit(numDiscosColetados, (325, 210))
     desenhaMoldura(azul)
 
-
 running = True
 perdeu = False
 
@@ -122,10 +134,11 @@ while running:
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 movimentoXPlayer = 0
-
+    
+  
     playerX = playerX + movimentoXPlayer
     discoY = discoY + velocidade
-
+   
     # só atualiza a tela enquanto o player não perder
     if perdeu == False:
         mostraJogo()
@@ -137,12 +150,13 @@ while running:
     # volta o primeiro disco pro começo
     if discoY >= posicFinalDisco:
         discoY = posicIncialDisco
-        discoX = random.randrange(0, largura)
+        discoX = random.randrange(10, 500)
         discosPerdidos += 1
 
     if colisao:
-        discosColetados += 1
-
+        velocidade =+ 0.2
+        discosColetados =+ 1
+    
     # termina o jogo
     if discosPerdidos == 3:
         discoY = posicFinalDisco
