@@ -1,7 +1,7 @@
 import pygame
 import random
 
-#abre o arquivo txt com as informações do usuário
+# abre o arquivo txt com as informações do usuário
 arquivo = open("registro.txt", "a+")
 
 nome = input("Qual é o seu nome? ")
@@ -55,6 +55,7 @@ azul = (0, 0, 255)
 azulClaro = (135, 206, 235)
 branco = (255, 255, 255)
 
+
 def desenhaMoldura(cor):
     pygame.draw.rect(tela, cor, pygame.Rect(0, 0, 510, 145))
     tela.blit(dj, (10, 20))
@@ -63,12 +64,13 @@ def desenhaMoldura(cor):
     pygame.draw.rect(tela, cor, pygame.Rect(0, 660, 510, 670))
     pygame.display.flip()
 
+
 # variaveis do disco
 posicIncialDisco = 115
-posicFinalDisco = 660
-discoX = random.randrange(10, 500)
+posicFinalDisco = 630
+discoX = random.randrange(10, 478)
 discoY = posicIncialDisco
-velocidade = 0.5
+velocidade = 0.50
 discosPerdidos = 0
 discosColetados = 0
 discoLista = []
@@ -118,8 +120,10 @@ def mostraJogo():
     tela.blit(numDiscosColetados, (325, 210))
     desenhaMoldura(azul)
 
+
 running = True
 perdeu = False
+colisao = False
 
 while running:
     for event in gameEvents.get():
@@ -128,17 +132,16 @@ while running:
             quit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                movimentoXPlayer = -0.5
+                movimentoXPlayer = -0.7
             elif event.key == pygame.K_RIGHT:
-                movimentoXPlayer = 0.5
+                movimentoXPlayer = 0.7
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 movimentoXPlayer = 0
-    
-  
+    colisao = False
     playerX = playerX + movimentoXPlayer
     discoY = discoY + velocidade
-   
+
     # só atualiza a tela enquanto o player não perder
     if perdeu == False:
         mostraJogo()
@@ -147,16 +150,22 @@ while running:
     if playerX <= 10 or playerX >= 449:
         movimentoXPlayer = 0
 
-    # volta o primeiro disco pro começo
+    # colisao
+    if discoX >= playerX and discoX <= playerX + 51 and (discoY + 32 >= playerY):
+        colisao = True
+        discoY = posicIncialDisco
+        discoX = random.randrange(10, 478)
+        discosColetados += 1
+
+    if colisao and (discosColetados % 5 == 0):
+        velocidade = velocidade + 0.05
+
+    # volta o disco pro começo
     if discoY >= posicFinalDisco:
         discoY = posicIncialDisco
-        discoX = random.randrange(10, 500)
+        discoX = random.randrange(10, 478)
         discosPerdidos += 1
 
-    if colisao:
-        velocidade =+ 0.2
-        discosColetados =+ 1
-    
     # termina o jogo
     if discosPerdidos == 3:
         discoY = posicFinalDisco
